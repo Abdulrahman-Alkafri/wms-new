@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: "wms-new"
+  datasource:
+    url: jdbc:postgresql://localhost:6000/WMS
+    username: postgres
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        connection:
+          timeout: 20
+    show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-sbu2qwqfd8j0zwlm.us.auth0.com/
+          audiences: https://dev-sbu2qwqfd8j0zwlm.us.auth0.com/api/v2/
+
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.springframework.security.oauth2: TRACE
+
+auth0:
+  domain: dev-sbu2qwqfd8j0zwlm.us.auth0.com
+  clientId: Ehx5xZrsTcGMvNQYvns73NY9tO4eArgJ
+  clientSecret: Rd689DtPvVhYCs768DfExxYMoby-qh6GPRxsdKttc1mHqRdQZGMypRi29fCGR7Rm
+  audience: https://dev-sbu2qwqfd8j0zwlm.us.auth0.com/api/v2/
+  roleId: rol_imCyKY8V19Sg2Fff
+  connection: Username-Password-Authentication

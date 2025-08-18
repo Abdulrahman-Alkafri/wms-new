@@ -9,11 +9,4 @@ import java.util.List;
 @Repository
 public interface ShipmentItemsRepository extends JpaRepository<ShipmentItems, Long> {
     
-    List<ShipmentItems> findByShipmentId(Long shipmentId);
-    
-    List<ShipmentItems> findByProductId(Long productId);
-    
-    List<ShipmentItems> findByBatchNumber(String batchNumber);
-    
-    List<ShipmentItems> findByShipmentIdAndProductId(Long shipmentId, Long productId);
 }

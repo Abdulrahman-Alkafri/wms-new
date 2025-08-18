@@ -1,5 +1,6 @@
 package com.example.wmsnew.supplier.entity;
 
+import com.example.wmsnew.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Supplier {
+public class Supplier extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

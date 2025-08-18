@@ -15,6 +15,8 @@ public class UserResponseDto {
   private String firstName;
   private String lastName;
   private String email;
+  private String phoneNumber;
   private UserRole role;
   private Boolean isActive;
+  private String createdAt;
 }

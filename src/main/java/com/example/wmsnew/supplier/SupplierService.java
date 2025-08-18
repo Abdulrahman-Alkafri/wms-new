@@ -42,6 +42,7 @@ public class SupplierService {
         .address(supplier.getAddress())
         .city(supplier.getCity())
         .state(supplier.getState())
+        .createdAt(supplier.getCreatedAt().toString())
         .build();
   }
 
@@ -58,7 +59,7 @@ public class SupplierService {
 
     Pageable pageable =
         PageRequest.of(
-            cs.getPage(),
+            cs.getPage() - 1, // Convert to 0-based indexing
             cs.getSize(),
             Sort.by(Sort.Direction.fromString(cs.getSortDir()), cs.getSortBy()));
 
@@ -75,6 +76,7 @@ public class SupplierService {
                 .address(supplier.getAddress())
                 .city(supplier.getCity())
                 .state(supplier.getState())
+                .createdAt(supplier.getCreatedAt().toString())
                 .build());
   }
 
@@ -102,5 +104,22 @@ public class SupplierService {
       throw new RuntimeException("Supplier not found with id: " + id);
     }
     supplierRepository.deleteById(id);
+  }
+
+  public SupplierResponseDto getSupplierById(Long id) {
+    Supplier supplier = supplierRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + id));
+    
+    return SupplierResponseDto.builder()
+        .id(supplier.getId())
+        .name(supplier.getName())
+        .contactPerson(supplier.getContactPerson())
+        .email(supplier.getEmail())
+        .phoneNumber(supplier.getPhoneNumber())
+        .address(supplier.getAddress())
+        .city(supplier.getCity())
+        .state(supplier.getState())
+        .createdAt(supplier.getCreatedAt().toString())
+        .build();
   }
 }

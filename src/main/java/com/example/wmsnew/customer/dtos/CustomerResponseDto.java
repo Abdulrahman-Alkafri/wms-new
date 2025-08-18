@@ -17,4 +17,5 @@ public class CustomerResponseDto {
     private String address;
     private String city;
     private String state;
+    private String createdAt;
 }

@@ -1,5 +1,6 @@
-package com.example.wmsnew.supplier.dto;
+package com.example.wmsnew.customer.dtos;
 
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,14 +10,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SupplierResponseDto {
-  private Long id;
+public class UpdateCustomerDto {
+
   private String name;
-  private String contactPerson;
+
+  @Email(message = "Invalid email format")
   private String email;
+
   private String phoneNumber;
+
   private String address;
+
   private String city;
+
   private String state;
-  private String createdAt;
 }

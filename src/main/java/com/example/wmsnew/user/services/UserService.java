@@ -31,12 +31,14 @@ public class UserService {
             createUserDto.getPassword(),
             createUserDto.getRole().toString());
     User user = new User();
+    user.setName(createUserDto.getName());
     user.setEmail(createUserDto.getEmail());
     user.setAuth0Id(auth0Id);
     user.setRole(createUserDto.getRole());
     user.setFirstName(createUserDto.getFirstName());
     user.setLastName(createUserDto.getLastName());
     user.setPhoneNumber(createUserDto.getPhoneNumber());
+    user.setIsActive(true);
     userRepository.save(user);
   }
 
@@ -47,7 +49,7 @@ public class UserService {
 
     Pageable pageable =
         PageRequest.of(
-            cs.getPage(),
+            cs.getPage() - 1, // Convert to 0-based indexing
             cs.getSize(),
             Sort.by(Sort.Direction.fromString(cs.getSortDir()), cs.getSortBy()));
 
@@ -60,8 +62,10 @@ public class UserService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
                 .role(user.getRole())
                 .isActive(user.getIsActive())
+                .createdAt(user.getCreatedAt().toString())
                 .build());
   }
 

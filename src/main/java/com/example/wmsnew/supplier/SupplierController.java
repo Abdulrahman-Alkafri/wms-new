@@ -32,6 +32,12 @@ public class SupplierController {
     return new ResponseEntity<>(suppliers, HttpStatus.OK);
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<SupplierResponseDto> getSupplierById(@PathVariable Long id) {
+    SupplierResponseDto supplier = supplierService.getSupplierById(id);
+    return ResponseEntity.ok(supplier);
+  }
+
   // 🔹 Update Supplier
   @PutMapping("/{id}")
   public ResponseEntity<Supplier> updateSupplier(

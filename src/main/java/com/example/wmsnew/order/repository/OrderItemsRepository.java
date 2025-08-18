@@ -11,12 +11,4 @@ import java.util.List;
 @Repository
 public interface OrderItemsRepository extends JpaRepository<OrderItems, Long> {
     
-    List<OrderItems> findByOrderId(Long orderId);
-    
-    List<OrderItems> findByProductId(Long productId);
-    
-    List<OrderItems> findByOrderIdAndProductId(Long orderId, Long productId);
-    
-    @Query("SELECT SUM(oi.requestedQuantity) FROM OrderItems oi WHERE oi.product.id = :productId")
-    Integer getTotalRequestedQuantityByProductId(@Param("productId") Long productId);
 }

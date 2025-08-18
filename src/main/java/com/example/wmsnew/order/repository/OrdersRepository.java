@@ -12,17 +12,4 @@ import java.util.Optional;
 @Repository
 public interface OrdersRepository extends JpaRepository<Order, Long> {
     
-    Optional<Order> findByOrderNumber(String orderNumber);
-    
-    List<Order> findByStatus(OrderStatus status);
-    
-    List<Order> findByWarehouseId(Long warehouseId);
-    
-    List<Order> findByCustomerId(Long customerId);
-    
-    List<Order> findByWarehouseIdAndStatus(Long warehouseId, OrderStatus status);
-    
-    List<Order> findByRequiredDateBefore(LocalDate date);
-    
-    List<Order> findByRequiredDateBetween(LocalDate startDate, LocalDate endDate);
 }

@@ -9,9 +9,3 @@ public class ProductSizeDto {
 }
 
 
-{
-  // product inof 
-  prodid:[{1:15,2:21}] 
-
-
-}

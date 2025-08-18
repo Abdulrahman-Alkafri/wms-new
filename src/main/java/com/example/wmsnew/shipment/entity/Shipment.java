@@ -3,47 +3,56 @@ package com.example.wmsnew.shipment.entity;
 import com.example.wmsnew.common.entity.BaseEntity;
 import com.example.wmsnew.common.enums.ShipmentStatus;
 import com.example.wmsnew.supplier.entity.Supplier;
+import com.example.wmsnew.user.entity.User;
 import com.example.wmsnew.warehouse.entity.Warehouse;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "shipment")
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Shipment extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "warehouse_id", nullable = false)
-    private Warehouse warehouse;
+  @ManyToOne
+  @JoinColumn(name = "supplier_id")
+  private Supplier supplier;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplier_id", nullable = false)
-    private Supplier supplier;
+  @Column(name = "shipment_number")
+  private String shipmentNumber;
 
-    @Column(name = "shipment_number", nullable = false)
-    private String shipmentNumber;
+  @Enumerated(EnumType.STRING)
+  private ShipmentStatus status;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ShipmentStatus status = ShipmentStatus.PENDING;
+  @ManyToOne
+  @JoinColumn(name = "storer_id")
+  private User storer;
 
-    private String carrier;
+  @Column(name = "total_price")
+  private Integer totalPrice;
 
-    @Column(columnDefinition = "TEXT")
-    private String note;
+  @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ShipmentItems> items = new ArrayList<>();
 
-    @Column(name = "total_price")
-    private BigDecimal totalPrice;
+  // Convenience
+  public void addItem(ShipmentItems item) {
+    items.add(item);
+    item.setShipment(this);
+  }
+
+  public void removeItem(ShipmentItems item) {
+    items.remove(item);
+    item.setShipment(null);
+  }
 }

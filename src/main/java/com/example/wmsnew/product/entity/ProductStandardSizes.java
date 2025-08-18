@@ -1,5 +1,6 @@
 package com.example.wmsnew.product.entity;
 
+import com.example.wmsnew.warehouse.entity.StandardSizes;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

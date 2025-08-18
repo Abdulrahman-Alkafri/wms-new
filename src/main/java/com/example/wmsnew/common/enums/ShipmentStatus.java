@@ -1,8 +1,7 @@
 package com.example.wmsnew.common.enums;
 
 public enum ShipmentStatus {
-    PENDING,
-    APPROVED,
-    STORED,
-    REJECTED
+  PENDING,
+  ASSIGNED,
+  STORED,
 }

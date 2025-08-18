@@ -1,8 +1,7 @@
 package com.example.wmsnew.common.enums;
 
 public enum OrderStatus {
-    CREATED,
+    PENDING,
     ASSIGNED,
     PICKED,
-    CANCELLED
 }

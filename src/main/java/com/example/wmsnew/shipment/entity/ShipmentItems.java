@@ -1,11 +1,9 @@
 package com.example.wmsnew.shipment.entity;
 
+import com.example.wmsnew.common.entity.BaseEntity;
 import com.example.wmsnew.product.entity.Product;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,34 +12,34 @@ import java.time.LocalDate;
 @Table(name = "shipment_items")
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-public class ShipmentItems {
+@NoArgsConstructor
+public class ShipmentItems extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shipment_id", nullable = false)
-    private Shipment shipment;
+  @ManyToOne
+  @JoinColumn(name = "shipment_id")
+  private Shipment shipment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+  @ManyToOne
+  @JoinColumn(name = "product_id")
+  private Product product;
 
-    @Column(nullable = false)
-    private Integer quantity;
+  private Integer quantity;
 
-    @Column(name = "batch_number", length = 100)
-    private String batchNumber;
+  @Column(name = "batch_number")
+  private String batchNumber;
 
-    @Column(name = "manufacturing_date")
-    private LocalDate manufacturingDate;
+  @Column(name = "manufacturing_date")
+  private LocalDate manufacturingDate;
 
-    @Column(name = "expiry_date")
-    private LocalDate expiryDate;
+  @Column(name = "expiry_date")
+  private LocalDate expiryDate;
 
-    @Column(name = "unit_cost", precision = 10, scale = 2)
-    private BigDecimal unitCost;
+  @Column(name = "unit_cost")
+  private BigDecimal unitCost;
 }

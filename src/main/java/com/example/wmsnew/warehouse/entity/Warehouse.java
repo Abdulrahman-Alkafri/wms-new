@@ -1,38 +1,42 @@
 package com.example.wmsnew.warehouse.entity;
 
 import com.example.wmsnew.common.entity.BaseEntity;
+import com.example.wmsnew.order.entity.Order;
+import com.example.wmsnew.shipment.entity.Shipment;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "warehouse")
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Warehouse extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @Column(name = "warehouse_name", nullable = false)
-    private String warehouseName;
+  @Column(name = "warehosue_name")
+  private String warehouseName;
 
-    private String address;
+  // Warehouse → Locations
+  @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Location> locations = new ArrayList<>();
 
-    private String city;
+  // Convenience methods
+  public void addLocation(Location location) {
+    locations.add(location);
+    location.setWarehouse(this);
+  }
 
-    private String state;
-
-    @Column(name = "area_size")
-    private BigDecimal areaSize;
-
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+  public void removeLocation(Location location) {
+    locations.remove(location);
+    location.setWarehouse(null);
+  }
 }

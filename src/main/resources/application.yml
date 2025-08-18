@@ -34,3 +34,9 @@ auth0:
   audience: https://dev-sbu2qwqfd8j0zwlm.us.auth0.com/api/v2/
   roleId: rol_imCyKY8V19Sg2Fff
   connection: Username-Password-Authentication
+  roles:
+    ADMIN: rol_Z2VCgufW9OWWWOvv
+    MANAGEER: rol_imCyKY8V19Sg2Fff
+    PICKER: rol_xF5a1DMlcKcfihck
+    STORER: rol_89JOJAizpGJcO5Xm
+    TESTER: rol_8J3UVYxDZ4FhFCAC

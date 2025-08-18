@@ -4,10 +4,7 @@ import com.example.wmsnew.common.entity.BaseEntity;
 import com.example.wmsnew.product.entity.Product;
 import com.example.wmsnew.warehouse.entity.Location;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -15,27 +12,27 @@ import java.time.LocalDate;
 @Table(name = "inventory")
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Inventory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inventory_id")
-    private Long inventoryId;
+    private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "location_id")
     private Location location;
 
-    @Column(nullable = false)
     private Integer quantity;
 
-    @Column(name = "batch_number", length = 100)
+    @Column(name = "batch_number")
     private String batchNumber;
 
     @Column(name = "manufacturing_date")

@@ -1,47 +1,56 @@
 package com.example.wmsnew.warehouse.entity;
 
 import com.example.wmsnew.common.entity.BaseEntity;
-import com.example.wmsnew.product.entity.StandardSizes;
+import com.example.wmsnew.inventory.entity.Inventory;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "locations")
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Location extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @Column(name = "location_code", nullable = false)
-    private String locationCode;
+  @Column(name = "location_code")
+  private String locationCode;
 
-    private String rack;
+  @ManyToOne
+  @JoinColumn(name = "warehoue_id")
+  private Warehouse warehouse;
 
-    private String shelf;
+  private String asile;
+  private String rack;
+  private String shelf;
+  private String bin;
 
-    private String bin;
+  @ManyToOne
+  @JoinColumn(name = "standard_sizes_id")
+  private StandardSizes standardSize;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "standard_sizes_id")
-    private StandardSizes standardSizes;
+  @Column(name = "current_load")
+  private Double currentLoad = 0.0;
 
-    @Column(name = "current_load")
-    private BigDecimal currentLoad;
+  @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Inventory> inventories = new ArrayList<>();
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+  // Convenience
+  public void addInventory(Inventory inv) {
+    inventories.add(inv);
+    inv.setLocation(this);
+  }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "zone_id", nullable = false)
-    private Zone zone;
+  public void removeInventory(Inventory inv) {
+    inventories.remove(inv);
+    inv.setLocation(null);
+  }
 }

@@ -1,7 +1,5 @@
 package com.example.wmsnew.shipment.repository;
 
-import com.example.wmsnew.common.enums.TestResultStatus;
-import com.example.wmsnew.shipment.entity.QualityTestResults;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

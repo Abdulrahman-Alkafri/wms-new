@@ -43,9 +43,21 @@ public class UserService {
   }
 
   public Page<UserResponseDto> findAllUsers(UserBaseSearchCriteria cs) {
-    Specification<User> userSpecification =
-        UserSpecifications.searchUser(
-            cs.getFirstName(), cs.getLastName(), cs.getEmail(), cs.getPhoneNumber(), cs.getRole());
+    Specification<User> userSpecification;
+    
+    if (cs.getGlobalSearch() != null && !cs.getGlobalSearch().isEmpty()) {
+      userSpecification = UserSpecifications.globalSearch(cs.getGlobalSearch());
+      
+      // Apply additional filters even with global search
+      if (cs.getRole() != null || cs.getActive() != null) {
+        Specification<User> filterSpec = UserSpecifications.searchUser(
+            null, null, null, null, cs.getRole(), cs.getActive());
+        userSpecification = userSpecification.and(filterSpec);
+      }
+    } else {
+      userSpecification = UserSpecifications.searchUser(
+          cs.getFirstName(), cs.getLastName(), cs.getEmail(), cs.getPhoneNumber(), cs.getRole(), cs.getActive());
+    }
 
     Pageable pageable =
         PageRequest.of(

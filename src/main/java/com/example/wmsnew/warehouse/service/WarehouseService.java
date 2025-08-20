@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class WarehouseService {
 
     List<String> locationCodes = new ArrayList<>();
 
-    for (var group : request.getLocationGroups()) {
+    for (LocationGroupRequest group : request.getLocationGroups()) {
       StandardSizes size =
           standardSizesRepository
               .findById(group.getStandardSizeId())
@@ -94,6 +93,24 @@ public class WarehouseService {
                 .build());
   }
 
+  public WarehouseResponse getWarehouseById(Long warehouseId) {
+    Warehouse warehouse =
+        warehouseRepository
+            .findById(warehouseId)
+            .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
+
+    List<String> locationCodes = warehouse.getLocations().stream()
+        .map(Location::getLocationCode)
+        .toList();
+
+    WarehouseResponse response = new WarehouseResponse();
+    response.setId(warehouse.getId());
+    response.setWarehouseName(warehouse.getWarehouseName());
+    response.setLocationCodes(locationCodes);
+
+    return response;
+  }
+
   @Transactional
   public WarehouseResponse updateWarehouse(Long warehouseId, UpdateWarehouseRequest request) {
     Warehouse warehouse =
@@ -152,5 +169,15 @@ public class WarehouseService {
     response.setLocationCodes(newLocationCodes);
 
     return response;
+  }
+
+  @Transactional
+  public void deleteWarehouse(Long warehouseId) {
+    Warehouse warehouse =
+        warehouseRepository
+            .findById(warehouseId)
+            .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
+
+    warehouseRepository.delete(warehouse);
   }
 }

@@ -48,14 +48,19 @@ public class SupplierService {
 
   // Search Suppliers
   public Page<SupplierResponseDto> findAllSuppliers(SupplierBaseSearchCriteria cs) {
-    Specification<Supplier> spec =
-        SupplierSpecifications.searchSupplier(
-            cs.getName(),
-            cs.getContactPerson(),
-            cs.getEmail(),
-            cs.getPhoneNumber(),
-            cs.getCity(),
-            cs.getState());
+    Specification<Supplier> spec;
+    
+    if (cs.getGlobalSearch() != null && !cs.getGlobalSearch().isEmpty()) {
+      spec = SupplierSpecifications.globalSearch(cs.getGlobalSearch());
+    } else {
+      spec = SupplierSpecifications.searchSupplier(
+              cs.getName(),
+              cs.getContactPerson(),
+              cs.getEmail(),
+              cs.getPhoneNumber(),
+              cs.getCity(),
+              cs.getState());
+    }
 
     Pageable pageable =
         PageRequest.of(

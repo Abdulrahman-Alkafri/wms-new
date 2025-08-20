@@ -18,4 +18,5 @@ public class UserBaseSearchCriteria extends BaseSearchCriteria {
   private String phoneNumber;
   private Boolean active;
   private UserRole role;
+  private String globalSearch;
 }

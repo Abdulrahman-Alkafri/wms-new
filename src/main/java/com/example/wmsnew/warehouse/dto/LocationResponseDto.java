@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class LocationResponseDto {
-  private Integer id;
+  private Long id;
   private String locationCode;
   private String aisle;
   private String rack;

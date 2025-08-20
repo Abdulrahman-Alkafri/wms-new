@@ -44,9 +44,14 @@ public class CustomerService {
   }
 
   public Page<CustomerResponseDto> findAllCustomers(CustomerBaseSearchCriteria cs) {
-    Specification<Customer> customerSpecification =
-            CustomerSpecifications.searchCustomer(
-                    cs.getName(), cs.getEmail(), cs.getPhoneNumber(), cs.getCity(), cs.getState());
+    Specification<Customer> customerSpecification;
+    
+    if (cs.getGlobalSearch() != null && !cs.getGlobalSearch().isEmpty()) {
+      customerSpecification = CustomerSpecifications.globalSearch(cs.getGlobalSearch());
+    } else {
+      customerSpecification = CustomerSpecifications.searchCustomer(
+              cs.getName(), cs.getEmail(), cs.getPhoneNumber(), cs.getCity(), cs.getState());
+    }
 
     Pageable pageable = PageRequest.of(
             cs.getPage() - 1, // Convert to 0-based indexing

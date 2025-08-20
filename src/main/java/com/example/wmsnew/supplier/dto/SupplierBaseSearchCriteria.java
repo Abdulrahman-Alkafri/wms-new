@@ -18,4 +18,5 @@ public class SupplierBaseSearchCriteria extends BaseSearchCriteria {
     private String phoneNumber;
     private String city;
     private String state;
+    private String globalSearch;
 }

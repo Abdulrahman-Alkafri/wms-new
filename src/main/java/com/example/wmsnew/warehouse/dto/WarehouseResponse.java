@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WarehouseResponse {
-    private Integer id;
+    private Long id;
     private String warehouseName;
     private List<String> locationCodes; // List of all generated locations
 }

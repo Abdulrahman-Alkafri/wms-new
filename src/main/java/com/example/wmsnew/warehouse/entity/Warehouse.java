@@ -20,9 +20,9 @@ public class Warehouse extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private Long id;
 
-  @Column(name = "warehosue_name")
+  @Column(name = "warehouse_name")
   private String warehouseName;
 
   // Warehouse → Locations

@@ -13,20 +13,26 @@ import java.util.List;
 public class UserSpecifications {
 
   public static Specification<User> searchUser(
-      String firstName, String lastName, String email, String phoneNumber, UserRole role) {
+      String firstName, String lastName, String email, String phoneNumber, UserRole role, Boolean active) {
     return (root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
       if (firstName != null && !firstName.isEmpty()) {
-        predicates.add(criteriaBuilder.like(root.get("name"), "%" + firstName + "%"));
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("firstName")), 
+            "%" + firstName.toLowerCase() + "%"));
       }
 
       if (lastName != null && !lastName.isEmpty()) {
-        predicates.add(criteriaBuilder.like(root.get("name"), "%" + lastName + "%"));
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("lastName")), 
+            "%" + lastName.toLowerCase() + "%"));
       }
 
       if (email != null && !email.isEmpty()) {
-        predicates.add(criteriaBuilder.like(root.get("email"), "%" + email + "%"));
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("email")), 
+            "%" + email.toLowerCase() + "%"));
       }
 
       if (phoneNumber != null && !phoneNumber.isEmpty()) {
@@ -37,7 +43,28 @@ public class UserSpecifications {
         predicates.add(criteriaBuilder.equal(root.get("role"), role));
       }
 
+      if (active != null) {
+        predicates.add(criteriaBuilder.equal(root.get("isActive"), active));
+      }
+
       return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+    };
+  }
+
+  public static Specification<User> globalSearch(String searchTerm) {
+    return (root, query, criteriaBuilder) -> {
+      if (searchTerm == null || searchTerm.isEmpty()) {
+        return criteriaBuilder.conjunction();
+      }
+
+      String likePattern = "%" + searchTerm.toLowerCase() + "%";
+      
+      return criteriaBuilder.or(
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")), likePattern),
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")), likePattern),
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), likePattern),
+          criteriaBuilder.like(root.get("phoneNumber"), likePattern)
+      );
     };
   }
 }

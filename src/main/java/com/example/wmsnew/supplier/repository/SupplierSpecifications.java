@@ -20,25 +20,54 @@ public class SupplierSpecifications {
       List<Predicate> predicates = new ArrayList<>();
 
       if (name != null && !name.isEmpty()) {
-        predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("name")), 
+            "%" + name.toLowerCase() + "%"));
       }
       if (contactPerson != null && !contactPerson.isEmpty()) {
-        predicates.add(criteriaBuilder.like(root.get("contactPerson"), "%" + contactPerson + "%"));
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("contactPerson")), 
+            "%" + contactPerson.toLowerCase() + "%"));
       }
       if (email != null && !email.isEmpty()) {
-        predicates.add(criteriaBuilder.like(root.get("email"), "%" + email + "%"));
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("email")), 
+            "%" + email.toLowerCase() + "%"));
       }
       if (phoneNumber != null && !phoneNumber.isEmpty()) {
         predicates.add(criteriaBuilder.like(root.get("phoneNumber"), "%" + phoneNumber + "%"));
       }
       if (city != null && !city.isEmpty()) {
-        predicates.add(criteriaBuilder.like(root.get("city"), "%" + city + "%"));
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("city")), 
+            "%" + city.toLowerCase() + "%"));
       }
       if (state != null && !state.isEmpty()) {
-        predicates.add(criteriaBuilder.like(root.get("state"), "%" + state + "%"));
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("state")), 
+            "%" + state.toLowerCase() + "%"));
       }
 
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+    };
+  }
+
+  public static Specification<Supplier> globalSearch(String searchTerm) {
+    return (root, query, criteriaBuilder) -> {
+      if (searchTerm == null || searchTerm.isEmpty()) {
+        return criteriaBuilder.conjunction();
+      }
+
+      String likePattern = "%" + searchTerm.toLowerCase() + "%";
+      
+      return criteriaBuilder.or(
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), likePattern),
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("contactPerson")), likePattern),
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), likePattern),
+          criteriaBuilder.like(root.get("phoneNumber"), likePattern),
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("city")), likePattern),
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("state")), likePattern)
+      );
     };
   }
 }

@@ -5,6 +5,7 @@ import com.example.wmsnew.warehouse.service.WarehouseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.*;
 
@@ -27,10 +28,23 @@ public class WarehouseController {
     return new ResponseEntity<>(warehouseService.findAllWarehouses(criteria), HttpStatus.OK);
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<WarehouseResponse> getWarehouseById(@PathVariable Long id) {
+    WarehouseResponse response = warehouseService.getWarehouseById(id);
+    return ResponseEntity.ok(response);
+  }
+
   @PutMapping("/{id}")
   public ResponseEntity<WarehouseResponse> updateWarehouse(
       @PathVariable Long id, @RequestBody UpdateWarehouseRequest request) {
     WarehouseResponse response = warehouseService.updateWarehouse(id, request);
     return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<Void> deleteWarehouse(@PathVariable Long id) {
+    warehouseService.deleteWarehouse(id);
+    return ResponseEntity.noContent().build();
   }
 }

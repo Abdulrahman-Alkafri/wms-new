@@ -1,7 +1,11 @@
 package com.example.wmsnew.Exceptions.productExceptions;
 
 public class CategoryNotFoundException extends RuntimeException {
-  public CategoryNotFoundException(Integer id) {
+  public CategoryNotFoundException(Long id) {
     super("Category with id " + id + " not found");
+  }
+  
+  public CategoryNotFoundException(String message) {
+    super(message);
   }
 }

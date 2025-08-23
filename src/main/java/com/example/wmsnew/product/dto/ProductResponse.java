@@ -12,5 +12,15 @@ public class ProductResponse {
   private String brandName;
   private String description;
   private BigDecimal price;
+  private Long categoryId;
   private String categoryName;
+  private String createdAt;
+  private List<ProductSizeResponse> sizes;
+  
+  @Data
+  public static class ProductSizeResponse {
+    private Long standardSizeId;
+    private String standardSizeName;
+    private Integer maxQuantity;
+  }
 }

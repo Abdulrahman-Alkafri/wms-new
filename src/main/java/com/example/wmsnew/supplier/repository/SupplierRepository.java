@@ -21,4 +21,6 @@ public interface SupplierRepository
   List<Supplier> findByState(String state);
 
   List<Supplier> findByNameContainingIgnoreCase(String name);
+
+  Long countByIsActiveTrue();
 }

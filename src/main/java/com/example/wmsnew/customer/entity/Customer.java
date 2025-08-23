@@ -30,4 +30,8 @@ public class Customer extends BaseEntity {
   private String city;
 
   private String state;
+
+  @Column(name = "is_active")
+  @Builder.Default
+  private Boolean isActive = true;
 }

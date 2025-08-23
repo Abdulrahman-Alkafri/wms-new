@@ -33,4 +33,8 @@ public class Supplier extends BaseEntity {
   private String city;
 
   private String state;
+
+  @Column(name = "is_active")
+  @Builder.Default
+  private Boolean isActive = true;
 }

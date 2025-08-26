@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     Long countByRole(UserRole role);
     Long countByRoleAndIsActiveTrue(UserRole role);
+    java.util.List<User> findByRole(UserRole role);
 }

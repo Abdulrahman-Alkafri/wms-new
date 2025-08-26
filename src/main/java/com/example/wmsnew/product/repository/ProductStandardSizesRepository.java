@@ -14,4 +14,6 @@ public interface ProductStandardSizesRepository extends JpaRepository<ProductSta
     List<ProductStandardSizes> findByStandardSizesId(Long standardSizesId);
     
     List<ProductStandardSizes> findByProductIdAndStandardSizesId(Long productId, Long standardSizesId);
+    
+    List<ProductStandardSizes> findByProduct(com.example.wmsnew.product.entity.Product product);
 }

@@ -11,4 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface InventoryRepository extends JpaRepository<Inventory, Long>, JpaSpecificationExecutor<Inventory> {}
+public interface InventoryRepository extends JpaRepository<Inventory, Long>, JpaSpecificationExecutor<Inventory> {
+    boolean existsByBatchNumber(String batchNumber);
+}

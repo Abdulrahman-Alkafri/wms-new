@@ -19,6 +19,11 @@ import com.example.wmsnew.warehouse.repository.WarehouseRepository;
 import com.example.wmsnew.warehouse.repository.LocationRepository;
 import com.example.wmsnew.inventory.entity.Inventory;
 import com.example.wmsnew.inventory.repository.InventoryRepository;
+import com.example.wmsnew.shipment.entity.Shipment;
+import com.example.wmsnew.shipment.entity.ShipmentItems;
+import com.example.wmsnew.shipment.repository.ShipmentRepository;
+import com.example.wmsnew.shipment.repository.ShipmentItemsRepository;
+import com.example.wmsnew.common.enums.ShipmentStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +47,8 @@ public class DataSeeder {
     private final WarehouseRepository warehouseRepository;
     private final LocationRepository locationRepository;
     private final InventoryRepository inventoryRepository;
+    private final ShipmentRepository shipmentRepository;
+    private final ShipmentItemsRepository shipmentItemsRepository;
 
     @Bean
     CommandLineRunner seedData() {
@@ -557,6 +564,83 @@ public class DataSeeder {
                 }
             } else {
                 System.out.println("📊 Database already contains " + inventoryRepository.count() + " inventory records, skipping seeding");
+            }
+
+            // Seed Shipments
+            if (shipmentRepository.count() == 0) {
+                List<Supplier> suppliers = supplierRepository.findAll();
+                List<Product> products = productRepository.findAll();
+                List<User> storers = userRepository.findByRole(UserRole.STORER);
+                
+                if (!suppliers.isEmpty() && !products.isEmpty()) {
+                    List<Shipment> shipments = List.of(
+                        Shipment.builder()
+                            .shipmentNumber("SHP-2024-001")
+                            .supplier(suppliers.get(0))
+                            .status(ShipmentStatus.PENDING)
+                            .totalPrice(15000)
+                            .build(),
+                        Shipment.builder()
+                            .shipmentNumber("SHP-2024-002")
+                            .supplier(suppliers.get(1))
+                            .status(ShipmentStatus.ASSIGNED)
+                            .storer(!storers.isEmpty() ? storers.get(0) : null)
+                            .totalPrice(22500)
+                            .build(),
+                        Shipment.builder()
+                            .shipmentNumber("SHP-2024-003")
+                            .supplier(suppliers.get(2))
+                            .status(ShipmentStatus.STORED)
+                            .storer(!storers.isEmpty() ? storers.get(1) : null)
+                            .totalPrice(8750)
+                            .build()
+                    );
+                    
+                    List<Shipment> savedShipments = shipmentRepository.saveAll(shipments);
+                    
+                    // Add shipment items
+                    List<ShipmentItems> shipmentItems = List.of(
+                        ShipmentItems.builder()
+                            .shipment(savedShipments.get(0))
+                            .product(products.get(0)) // iPhone 14 Pro
+                            .quantity(15)
+                            .batchNumber("SHP-1-ITM-1-20240824")
+                            .manufacturingDate(LocalDate.now().minusDays(30))
+                            .unitCost(new BigDecimal("999.99"))
+                            .build(),
+                        ShipmentItems.builder()
+                            .shipment(savedShipments.get(1))
+                            .product(products.get(1)) // Samsung Galaxy S23
+                            .quantity(25)
+                            .batchNumber("SHP-2-ITM-2-20240824")
+                            .manufacturingDate(LocalDate.now().minusDays(45))
+                            .unitCost(new BigDecimal("899.99"))
+                            .build(),
+                        ShipmentItems.builder()
+                            .shipment(savedShipments.get(2))
+                            .product(products.get(2)) // Nike Air Max 270
+                            .quantity(50)
+                            .batchNumber("SHP-3-ITM-3-20240824")
+                            .manufacturingDate(LocalDate.now().minusDays(20))
+                            .unitCost(new BigDecimal("149.99"))
+                            .build(),
+                        ShipmentItems.builder()
+                            .shipment(savedShipments.get(0))
+                            .product(products.get(3)) // Levi's 501 Jeans
+                            .quantity(100)
+                            .batchNumber("SHP-1-ITM-4-20240824")
+                            .manufacturingDate(LocalDate.now().minusDays(60))
+                            .unitCost(new BigDecimal("69.99"))
+                            .build()
+                    );
+                    
+                    shipmentItemsRepository.saveAll(shipmentItems);
+                    System.out.println("✅ Seeded " + savedShipments.size() + " shipments with " + shipmentItems.size() + " items to the database");
+                } else {
+                    System.out.println("⚠️ No suppliers or products found, skipping shipment seeding");
+                }
+            } else {
+                System.out.println("📊 Database already contains " + shipmentRepository.count() + " shipments, skipping seeding");
             }
         };
     }

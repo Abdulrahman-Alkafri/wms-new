@@ -6,6 +6,7 @@ import com.example.wmsnew.product.repository.*;
 import com.example.wmsnew.warehouse.entity.StandardSizes;
 import com.example.wmsnew.warehouse.repository.StandardSizesRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,13 +16,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductService {
 
   private final ProductRepository productRepository;
   private final CategoryRepository categoryRepository;
   private final StandardSizesRepository standardSizesRepository;
 
-  @Transactional
   public ProductResponse createProduct(ProductCreateRequest request) {
     Category category =
         categoryRepository
@@ -60,29 +61,53 @@ public class ProductService {
   }
 
   public Page<ProductResponse> findAllProducts(ProductBaseSearchCriteria cs) {
-    Specification<Product> spec =
-        ProductSpecifications.searchProduct(
-            cs.getProductName(), cs.getBrandName(), cs.getCategoryName());
+    log.info("ProductService.findAllProducts called with criteria: {}", cs);
+    
+    // Handle null criteria
+    if (cs == null) {
+      log.info("Creating default criteria");
+      cs = ProductBaseSearchCriteria.builder().build();
+    }
+    log.info("Criteria after null check: {}", cs);
+    
+    try {
+      Specification<Product> spec =
+          ProductSpecifications.searchProduct(
+              cs.getProductName(), cs.getBrandName(), cs.getCategoryName());
 
-    Pageable pageable =
-        PageRequest.of(
-            cs.getPage(),
-            cs.getSize(),
-            Sort.by(Sort.Direction.fromString(cs.getSortDir()), cs.getSortBy()));
+      // Handle null values with defaults
+      Integer page = cs.getPage() != null ? cs.getPage() : 0; // Products use 0-based indexing
+      Integer size = cs.getSize() != null ? cs.getSize() : 10;
+      String sortBy = cs.getSortBy() != null ? cs.getSortBy() : "id";
+      String sortDir = cs.getSortDir() != null ? cs.getSortDir() : "asc";
 
-    Page<Product> products = productRepository.findAll(spec, pageable);
+      log.info("Pagination: page={}, size={}, sortBy={}, sortDir={}", page, size, sortBy, sortDir);
 
-    return products.map(
-        product -> {
-          ProductResponse response = new ProductResponse();
-          response.setId(product.getId());
-          response.setProductName(product.getProductName());
-          response.setBrandName(product.getBrandName());
-          response.setDescription(product.getDescription());
-          response.setPrice(product.getPrice());
-          response.setCategoryName(product.getCategory().getName());
-          return response; // return inside the lambda
-        });
+      Pageable pageable =
+          PageRequest.of(
+              page,
+              size,
+              Sort.by(Sort.Direction.fromString(sortDir), sortBy));
+
+      log.info("About to call productRepository.findAll...");
+      Page<Product> products = productRepository.findAll(spec, pageable);
+      log.info("Repository call completed. Found {} products", products.getTotalElements());
+
+      return products.map(
+          product -> {
+            ProductResponse response = new ProductResponse();
+            response.setId(product.getId());
+            response.setProductName(product.getProductName());
+            response.setBrandName(product.getBrandName());
+            response.setDescription(product.getDescription());
+            response.setPrice(product.getPrice());
+            response.setCategoryName(product.getCategory().getName());
+            return response; // return inside the lambda
+          });
+    } catch (Exception e) {
+      log.error("Error in findAllProducts", e);
+      throw e;
+    }
   }
 
   private ProductResponse mapToResponse(Product product) {
@@ -94,7 +119,7 @@ public class ProductService {
     response.setPrice(product.getPrice());
     response.setCategoryId(product.getCategory().getId());
     response.setCategoryName(product.getCategory().getName());
-    response.setCreatedAt(product.getCreatedAt().toString());
+    response.setCreatedAt(product.getCreatedAt() != null ? product.getCreatedAt().toString() : null);
     
     // Map product sizes
     List<ProductResponse.ProductSizeResponse> sizeResponses = product.getProductStandardSizes().stream()

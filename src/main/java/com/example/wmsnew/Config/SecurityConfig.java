@@ -28,6 +28,7 @@ public class SecurityConfig {
             authorizeRequests.requestMatchers("/api/public/**").permitAll()
                            .requestMatchers("/api/categories/**").permitAll()
                            .requestMatchers("/api/inventory/**").permitAll()
+                           .requestMatchers("/api/products/**").permitAll()
                            .anyRequest().authenticated())
         .oauth2ResourceServer(
             oauth2 ->

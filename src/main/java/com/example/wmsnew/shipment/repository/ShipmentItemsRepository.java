@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ShipmentItemsRepository extends JpaRepository<ShipmentItems, Long> {
-    
+    boolean existsByBatchNumber(String batchNumber);
 }

@@ -40,6 +40,7 @@ public class Product extends BaseEntity {
 
   // ✅ Product ↔ ProductStandardSizes
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
   private List<ProductStandardSizes> productStandardSizes = new ArrayList<>();
 
   public void addProductStandardSize(ProductStandardSizes pss) {
@@ -54,6 +55,7 @@ public class Product extends BaseEntity {
 
   // ✅ Product ↔ ShipmentItems
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
   private List<ShipmentItems> shipmentItems = new ArrayList<>();
 
   public void addShipmentItem(ShipmentItems si) {
@@ -68,6 +70,7 @@ public class Product extends BaseEntity {
 
   // ✅ Product ↔ OrderItems
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
   private List<OrderItems> orderItems = new ArrayList<>();
 
   public void addOrderItem(OrderItems oi) {
@@ -82,6 +85,7 @@ public class Product extends BaseEntity {
 
   // ✅ Product ↔ Inventory
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
   private List<Inventory> inventories = new ArrayList<>();
 
   public void addInventory(Inventory inv) {

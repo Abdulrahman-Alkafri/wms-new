@@ -4,11 +4,9 @@ import com.example.wmsnew.common.entity.BaseEntity;
 import com.example.wmsnew.common.enums.ShipmentStatus;
 import com.example.wmsnew.supplier.entity.Supplier;
 import com.example.wmsnew.user.entity.User;
-import com.example.wmsnew.warehouse.entity.Warehouse;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +21,7 @@ public class Shipment extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private Long id;
 
   @ManyToOne
   @JoinColumn(name = "supplier_id")
@@ -42,7 +40,8 @@ public class Shipment extends BaseEntity {
   @Column(name = "total_price")
   private Integer totalPrice;
 
-  @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
   private List<ShipmentItems> items = new ArrayList<>();
 
   // Convenience

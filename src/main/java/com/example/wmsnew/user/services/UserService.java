@@ -11,6 +11,7 @@ import com.example.wmsnew.user.repository.UserRepository;
 import com.example.wmsnew.user.repository.UserSpecifications;
 import com.example.wmsnew.warehouse.repository.WarehouseRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserService {
 
   private UserRepository userRepository;
@@ -43,42 +45,68 @@ public class UserService {
   }
 
   public Page<UserResponseDto> findAllUsers(UserBaseSearchCriteria cs) {
-    Specification<User> userSpecification;
+    log.info("UserService.findAllUsers called with criteria: {}", cs);
     
-    if (cs.getGlobalSearch() != null && !cs.getGlobalSearch().isEmpty()) {
-      userSpecification = UserSpecifications.globalSearch(cs.getGlobalSearch());
-      
-      // Apply additional filters even with global search
-      if (cs.getRole() != null || cs.getActive() != null) {
-        Specification<User> filterSpec = UserSpecifications.searchUser(
-            null, null, null, null, cs.getRole(), cs.getActive());
-        userSpecification = userSpecification.and(filterSpec);
-      }
-    } else {
-      userSpecification = UserSpecifications.searchUser(
-          cs.getFirstName(), cs.getLastName(), cs.getEmail(), cs.getPhoneNumber(), cs.getRole(), cs.getActive());
+    // Handle null criteria
+    if (cs == null) {
+      log.info("Creating default criteria");
+      cs = UserBaseSearchCriteria.builder().build();
     }
+    log.info("Criteria after null check: {}", cs);
+    
+    try {
+      Specification<User> userSpecification;
+      
+      if (cs.getGlobalSearch() != null && !cs.getGlobalSearch().isEmpty()) {
+        log.info("Using global search: {}", cs.getGlobalSearch());
+        userSpecification = UserSpecifications.globalSearch(cs.getGlobalSearch());
+        
+        // Apply additional filters even with global search
+        if (cs.getRole() != null || cs.getActive() != null) {
+          Specification<User> filterSpec = UserSpecifications.searchUser(
+              null, null, null, null, cs.getRole(), cs.getActive());
+          userSpecification = userSpecification.and(filterSpec);
+        }
+      } else {
+        log.info("Using detailed search");
+        userSpecification = UserSpecifications.searchUser(
+            cs.getFirstName(), cs.getLastName(), cs.getEmail(), cs.getPhoneNumber(), cs.getRole(), cs.getActive());
+      }
 
-    Pageable pageable =
-        PageRequest.of(
-            cs.getPage() - 1, // Convert to 0-based indexing
-            cs.getSize(),
-            Sort.by(Sort.Direction.fromString(cs.getSortDir()), cs.getSortBy()));
+      // Handle null values with defaults
+      Integer page = cs.getPage() != null ? cs.getPage() : 1;
+      Integer size = cs.getSize() != null ? cs.getSize() : 10;
+      String sortBy = cs.getSortBy() != null ? cs.getSortBy() : "id";
+      String sortDir = cs.getSortDir() != null ? cs.getSortDir() : "asc";
+      
+      log.info("Pagination: page={}, size={}, sortBy={}, sortDir={}", page, size, sortBy, sortDir);
 
-    Page<User> usersPage = userRepository.findAll(userSpecification, pageable);
+      Pageable pageable =
+          PageRequest.of(
+              page - 1, // Convert to 0-based indexing
+              size,
+              Sort.by(Sort.Direction.fromString(sortDir), sortBy));
 
-    return usersPage.map(
-        user ->
-            UserResponseDto.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .role(user.getRole())
-                .isActive(user.getIsActive())
-                .createdAt(user.getCreatedAt().toString())
-                .build());
+      log.info("About to call userRepository.findAll...");
+      Page<User> usersPage = userRepository.findAll(userSpecification, pageable);
+      log.info("Repository call completed. Found {} users", usersPage.getTotalElements());
+
+      return usersPage.map(
+          user ->
+              UserResponseDto.builder()
+                  .id(user.getId())
+                  .firstName(user.getFirstName())
+                  .lastName(user.getLastName())
+                  .email(user.getEmail())
+                  .phoneNumber(user.getPhoneNumber())
+                  .role(user.getRole())
+                  .isActive(user.getIsActive())
+                  .createdAt(user.getCreatedAt().toString())
+                  .build());
+    } catch (Exception e) {
+      log.error("Error in findAllUsers", e);
+      throw e;
+    }
   }
 
   public void updateUser(Long userId, UpdateUserDto dto) throws Auth0Exception {

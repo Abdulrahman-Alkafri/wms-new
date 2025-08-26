@@ -6,6 +6,7 @@ import com.example.wmsnew.product.dto.ProductResponse;
 import com.example.wmsnew.product.dto.ProductUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductController {
 
   private final ProductService productService;
@@ -22,6 +24,25 @@ public class ProductController {
   public ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid ProductCreateRequest request) {
     ProductResponse response = productService.createProduct(request);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
+  }
+
+  @GetMapping
+  public ResponseEntity<Page<ProductResponse>> getAllProducts(
+      @ModelAttribute ProductBaseSearchCriteria criteria) {
+    log.info("=== ProductController.getAllProducts ENTRY ===");
+    log.info("Received criteria: {}", criteria);
+    try {
+      if (criteria == null) {
+        log.info("Creating default criteria");
+        criteria = ProductBaseSearchCriteria.builder().build();
+      }
+      Page<ProductResponse> products = productService.findAllProducts(criteria);
+      log.info("Successfully retrieved {} products", products.getTotalElements());
+      return ResponseEntity.ok(products);
+    } catch (Exception e) {
+      log.error("Error in getAllProducts", e);
+      throw e;
+    }
   }
 
   @GetMapping("/search")

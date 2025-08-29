@@ -59,46 +59,46 @@ public class ShipmentController {
     
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORER')")
-    public ResponseEntity<ShipmentResponseDto> getShipmentById(@PathVariable Integer id) {
+    public ResponseEntity<ShipmentResponseDto> getShipmentById(@PathVariable Long id) {
         ShipmentResponseDto response = shipmentService.getShipmentById(id);
         return ResponseEntity.ok(response);
     }
     
     @GetMapping("/{id}/putaway")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORER')")
-    public ResponseEntity<List<ShipmentPutawayDto>> getPutawayInstructions(@PathVariable Integer id) {
+    public ResponseEntity<List<ShipmentPutawayDto>> getPutawayInstructions(@PathVariable Long id) {
         log.info("Getting putaway instructions for shipment: {}", id);
-        List<ShipmentPutawayDto> response = shipmentService.getPutawayInstructions(Long.valueOf(id));
+        List<ShipmentPutawayDto> response = shipmentService.getPutawayInstructions(id);
         return ResponseEntity.ok(response);
     }
     
     @PutMapping("/{id}/assign")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ShipmentResponseDto> assignShipment(
-            @PathVariable Integer id,
-            @RequestParam Integer storerId) {
-        ShipmentResponseDto response = shipmentService.assignShipment(Long.valueOf(id), Long.valueOf(storerId));
+            @PathVariable Long id,
+            @RequestParam Long storerId) {
+        ShipmentResponseDto response = shipmentService.assignShipment(id, storerId);
         return ResponseEntity.ok(response);
     }
     
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<ShipmentResponseDto> updateShipment(@PathVariable Integer id, @Valid @RequestBody UpdateShipmentDto updateDto) {
-        ShipmentResponseDto response = shipmentService.updateShipment(Long.valueOf(id), updateDto);
+    public ResponseEntity<ShipmentResponseDto> updateShipment(@PathVariable Long id, @Valid @RequestBody UpdateShipmentDto updateDto) {
+        ShipmentResponseDto response = shipmentService.updateShipment(id, updateDto);
         return ResponseEntity.ok(response);
     }
     
     @PutMapping("/{id}/stored")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORER')")
-    public ResponseEntity<ShipmentResponseDto> markAsStored(@PathVariable Integer id) {
-        ShipmentResponseDto response = shipmentService.markAsStored(Long.valueOf(id));
+    public ResponseEntity<ShipmentResponseDto> markAsStored(@PathVariable Long id) {
+        ShipmentResponseDto response = shipmentService.markAsStored(id);
         return ResponseEntity.ok(response);
     }
     
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<Void> deleteShipment(@PathVariable Integer id) {
-        shipmentService.deleteShipment(Long.valueOf(id));
+    public ResponseEntity<Void> deleteShipment(@PathVariable Long id) {
+        shipmentService.deleteShipment(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -10,6 +10,12 @@ public class DashboardStatistics {
     private Long warehousesWithHighCapacity;
     private Long suppliersWithActiveContracts;
     private Long customersWithRecentOrders;
+    
+    // Growth statistics
+    private Double usersGrowthPercentage;
+    private Double warehousesGrowthPercentage;
+    private Double employeesGrowthPercentage;
+    private Double suppliersGrowthPercentage;
 
     public DashboardStatistics() {}
 
@@ -99,5 +105,37 @@ public class DashboardStatistics {
 
     public void setCustomersWithRecentOrders(Long customersWithRecentOrders) {
         this.customersWithRecentOrders = customersWithRecentOrders;
+    }
+    
+    public Double getUsersGrowthPercentage() {
+        return usersGrowthPercentage;
+    }
+
+    public void setUsersGrowthPercentage(Double usersGrowthPercentage) {
+        this.usersGrowthPercentage = usersGrowthPercentage;
+    }
+
+    public Double getWarehousesGrowthPercentage() {
+        return warehousesGrowthPercentage;
+    }
+
+    public void setWarehousesGrowthPercentage(Double warehousesGrowthPercentage) {
+        this.warehousesGrowthPercentage = warehousesGrowthPercentage;
+    }
+
+    public Double getEmployeesGrowthPercentage() {
+        return employeesGrowthPercentage;
+    }
+
+    public void setEmployeesGrowthPercentage(Double employeesGrowthPercentage) {
+        this.employeesGrowthPercentage = employeesGrowthPercentage;
+    }
+
+    public Double getSuppliersGrowthPercentage() {
+        return suppliersGrowthPercentage;
+    }
+
+    public void setSuppliersGrowthPercentage(Double suppliersGrowthPercentage) {
+        this.suppliersGrowthPercentage = suppliersGrowthPercentage;
     }
 }

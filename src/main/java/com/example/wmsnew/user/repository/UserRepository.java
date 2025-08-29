@@ -12,4 +12,11 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Long countByRole(UserRole role);
     Long countByRoleAndIsActiveTrue(UserRole role);
     java.util.List<User> findByRole(UserRole role);
+    
+    // Additional analytics queries for productivity calculations
+    @org.springframework.data.jpa.repository.Query("SELECT u.role, COUNT(u) as totalCount, " +
+           "SUM(CASE WHEN u.isActive = true THEN 1 ELSE 0 END) as activeCount " +
+           "FROM User u " +
+           "GROUP BY u.role")
+    java.util.List<Object[]> getUserStatsByRole();
 }

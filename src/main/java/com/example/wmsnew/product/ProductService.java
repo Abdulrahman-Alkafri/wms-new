@@ -5,9 +5,6 @@ import com.example.wmsnew.product.entity.*;
 import com.example.wmsnew.product.repository.*;
 import com.example.wmsnew.warehouse.entity.StandardSizes;
 import com.example.wmsnew.warehouse.repository.StandardSizesRepository;
-import com.example.wmsnew.inventory.InventoryService;
-import com.example.wmsnew.warehouse.entity.Location;
-import com.example.wmsnew.warehouse.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,8 +22,6 @@ public class ProductService {
   private final ProductRepository productRepository;
   private final CategoryRepository categoryRepository;
   private final StandardSizesRepository standardSizesRepository;
-  private final InventoryService inventoryService;
-  private final LocationRepository locationRepository;
 
   @Transactional
   public ProductResponse createProduct(ProductCreateRequest request) {
@@ -63,9 +58,6 @@ public class ProductService {
 
     // Save the product first to get the ID
     product = productRepository.save(product);
-    
-    // Generate initial inventory entries for the new product
-    generateInitialInventory(product);
 
     return mapToResponse(product);
   }
@@ -208,42 +200,4 @@ public class ProductService {
     productRepository.delete(product);
   }
 
-  private void generateInitialInventory(Product product) {
-    log.info("Generating initial inventory for product: {}", product.getProductName());
-    
-    // Get available locations (limit to first few locations to avoid creating too many records)
-    List<Location> availableLocations = locationRepository.findAll()
-        .stream()
-        .limit(5) // Only create inventory in first 5 locations
-        .toList();
-    
-    if (availableLocations.isEmpty()) {
-      log.warn("No locations found to create inventory for product: {}", product.getProductName());
-      return;
-    }
-
-    // Generate a simple batch number for initial inventory
-    String batchNumber = "INIT-" + product.getId() + "-001";
-    
-    // Create initial inventory entries with zero quantity in a few locations
-    for (Location location : availableLocations) {
-      try {
-        inventoryService.addInventory(
-            product,
-            location,
-            0, // Start with zero inventory
-            batchNumber,
-            null, // No manufacturing date for initial inventory
-            null  // No expiry date for initial inventory
-        );
-        
-        log.info("Created initial inventory for product {} at location {}", 
-                product.getProductName(), location.getLocationCode());
-      } catch (Exception e) {
-        log.error("Failed to create inventory for product {} at location {}: {}", 
-                product.getProductName(), location.getLocationCode(), e.getMessage());
-        // Continue with other locations even if one fails
-      }
-    }
-  }
 }

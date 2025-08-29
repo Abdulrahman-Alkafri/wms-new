@@ -33,6 +33,7 @@ public class ShipmentItems extends BaseEntity {
   private Integer quantity;
 
   @Column(name = "received_quantity")
+  @Builder.Default
   private Integer receivedQuantity = 0;
 
   @Column(name = "batch_number")

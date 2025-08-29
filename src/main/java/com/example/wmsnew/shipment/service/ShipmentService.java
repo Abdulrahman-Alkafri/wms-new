@@ -112,7 +112,7 @@ public class ShipmentService {
         // Generate batch number using timestamp and product info (shipment ID might be null at this point)
         String tempBatchNumber = batchNumberService.generateUniqueBatchNumber(
                 shipment.getId() != null ? shipment.getId().intValue() : 0, 
-                product.getId().intValue());
+                product.getId());
         item.setBatchNumber(tempBatchNumber);
         
         // Initialize putaway records list if null
@@ -168,8 +168,8 @@ public class ShipmentService {
         return shipments.map(this::mapToResponseDto);
     }
     
-    public ShipmentResponseDto getShipmentById(Integer id) {
-        Shipment shipment = shipmentRepository.findById(id.longValue())
+    public ShipmentResponseDto getShipmentById(Long id) {
+        Shipment shipment = shipmentRepository.findById(id)
                 .orElseThrow(() -> new ShipmentNotFoundException("Shipment not found with id: " + id));
         return mapToResponseDto(shipment);
     }
@@ -221,7 +221,7 @@ public class ShipmentService {
     
     @Transactional
     public ShipmentResponseDto assignShipment(Long shipmentId, Long storerId) {
-        Shipment shipment = shipmentRepository.findById(shipmentId.longValue())
+        Shipment shipment = shipmentRepository.findById(shipmentId)
                 .orElseThrow(() -> new ShipmentNotFoundException("Shipment not found with id: " + shipmentId));
         
         // Only PENDING shipments can be assigned
@@ -356,7 +356,7 @@ public class ShipmentService {
         
         // Safety check: Remove any inventory that might exist for this shipment
         for (ShipmentItems item : shipment.getItems()) {
-            if (item.getReceivedQuantity() > 0) {
+            if (item.getReceivedQuantity() != null && item.getReceivedQuantity() > 0) {
                 log.info("Removing inventory for shipment item: {} from shipment {}", 
                         item.getProduct().getProductName(), shipmentId);
                 removeInventoryForShipmentItem(shipment, item);

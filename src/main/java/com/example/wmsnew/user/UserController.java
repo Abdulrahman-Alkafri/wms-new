@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,7 @@ public class UserController {
   private final UserService userService;
 
   @PostMapping("/create")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> createUser(@RequestBody CreateUserDto createUserDto)
       throws Auth0Exception {
     userService.createUser(createUserDto);
@@ -28,6 +30,7 @@ public class UserController {
   }
 
   @GetMapping("/search")
+  @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
   public ResponseEntity<Page<UserResponseDto>> findAllUsers(
       @ModelAttribute UserBaseSearchCriteria criteria) {
     Page<UserResponseDto> userResponseDtos = userService.findAllUsers(criteria);
@@ -35,6 +38,7 @@ public class UserController {
   }
 
   @PutMapping("/{userId}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Void> updateUser(
       @PathVariable Long userId, @Valid @RequestBody UpdateUserDto dto) throws Auth0Exception {
 
@@ -43,6 +47,7 @@ public class UserController {
   }
 
   @DeleteMapping("/{userId}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Void> deleteUser(@PathVariable Long userId) throws Auth0Exception {
     userService.deleteUser(userId);
     return ResponseEntity.noContent().build(); // 204 No Content

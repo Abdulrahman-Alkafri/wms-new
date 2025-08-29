@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,12 +22,14 @@ public class ProductController {
   private final ProductService productService;
 
   @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid ProductCreateRequest request) {
     ProductResponse response = productService.createProduct(request);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
   @GetMapping
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<Page<ProductResponse>> getAllProducts(
       @ModelAttribute ProductBaseSearchCriteria criteria) {
     log.info("=== ProductController.getAllProducts ENTRY ===");
@@ -46,6 +49,7 @@ public class ProductController {
   }
 
   @GetMapping("/search")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<Page<ProductResponse>> findAllProducts(
       @ModelAttribute ProductBaseSearchCriteria criteria) {
     Page<ProductResponse> products = productService.findAllProducts(criteria);
@@ -53,12 +57,14 @@ public class ProductController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<ProductResponse> getProductById(@PathVariable Integer id) {
     ProductResponse product = productService.getProductById(id);
     return ResponseEntity.ok(product);
   }
 
   @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ProductResponse> updateProduct(
       @PathVariable Integer id, @Valid @RequestBody ProductUpdateRequest request) {
     ProductResponse updated = productService.updateProduct(id, request);
@@ -66,6 +72,7 @@ public class ProductController {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
     productService.deleteProduct(id);
     return ResponseEntity.noContent().build();

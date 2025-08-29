@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "shipment_items")
@@ -31,6 +32,9 @@ public class ShipmentItems extends BaseEntity {
 
   private Integer quantity;
 
+  @Column(name = "received_quantity")
+  private Integer receivedQuantity = 0;
+
   @Column(name = "batch_number")
   private String batchNumber;
 
@@ -42,4 +46,7 @@ public class ShipmentItems extends BaseEntity {
 
   @Column(name = "unit_cost")
   private BigDecimal unitCost;
+
+  @OneToMany(mappedBy = "shipmentItem", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ShipmentPutaway> putawayRecords;
 }

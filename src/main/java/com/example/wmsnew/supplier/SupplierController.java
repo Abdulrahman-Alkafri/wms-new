@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,12 +23,14 @@ public class SupplierController {
   private final SupplierService supplierService;
 
   @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<SupplierResponseDto> createSupplier(@RequestBody CreateSupplierDto dto) {
     SupplierResponseDto response = supplierService.createSupplier(dto);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
   @GetMapping
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<Page<SupplierResponseDto>> getAllSuppliers(
       @ModelAttribute SupplierBaseSearchCriteria criteria) {
     log.info("=== SupplierController.getAllSuppliers ENTRY ===");
@@ -47,6 +50,7 @@ public class SupplierController {
   }
 
   @GetMapping("/search")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<Page<SupplierResponseDto>> findAllSuppliers(
       @ModelAttribute SupplierBaseSearchCriteria criteria) {
     Page<SupplierResponseDto> suppliers = supplierService.findAllSuppliers(criteria);
@@ -54,6 +58,7 @@ public class SupplierController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<SupplierResponseDto> getSupplierById(@PathVariable Long id) {
     SupplierResponseDto supplier = supplierService.getSupplierById(id);
     return ResponseEntity.ok(supplier);
@@ -61,6 +66,7 @@ public class SupplierController {
 
   // 🔹 Update Supplier
   @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Supplier> updateSupplier(
       @PathVariable Long id, @Valid @RequestBody UpdateSupplierDto dto) {
 
@@ -70,6 +76,7 @@ public class SupplierController {
 
   // 🔹 Delete Supplier
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Void> deleteSupplier(@PathVariable Long id) {
     supplierService.deleteSupplier(id);
     return ResponseEntity.noContent().build();

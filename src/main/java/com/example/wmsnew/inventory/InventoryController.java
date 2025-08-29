@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/inventory")
@@ -18,6 +20,7 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
     public ResponseEntity<Page<InventoryResponseDto>> searchInventory(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -64,8 +67,47 @@ public class InventoryController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
     public ResponseEntity<InventoryResponseDto> getInventoryById(@PathVariable Long id) {
         InventoryResponseDto inventory = inventoryService.getInventoryById(id);
         return ResponseEntity.ok(inventory);
+    }
+
+    @GetMapping("/by-product/{productId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
+    public ResponseEntity<List<InventoryResponseDto>> getAvailableInventoryByProduct(@PathVariable Integer productId) {
+        List<InventoryResponseDto> inventory = inventoryService.getAvailableInventoryByProduct(productId);
+        return ResponseEntity.ok(inventory);
+    }
+
+    @PutMapping("/{id}/quantity")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<InventoryResponseDto> updateInventoryQuantity(
+            @PathVariable Long id, 
+            @RequestBody UpdateQuantityRequest request) {
+        try {
+            if (request.getQuantity() == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            InventoryResponseDto updatedInventory = inventoryService.updateInventoryQuantity(id, request.getQuantity());
+            return ResponseEntity.ok(updatedInventory);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // DTO for updating quantity
+    public static class UpdateQuantityRequest {
+        private Integer quantity;
+        
+        public UpdateQuantityRequest() {}
+        
+        public UpdateQuantityRequest(Integer quantity) {
+            this.quantity = quantity;
+        }
+        
+        public Integer getQuantity() { return quantity; }
+        public void setQuantity(Integer quantity) { this.quantity = quantity; }
     }
 }

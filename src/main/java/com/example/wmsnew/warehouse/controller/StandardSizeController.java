@@ -23,12 +23,14 @@ public class StandardSizeController {
     private final StandardSizeService standardSizeService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
     public ResponseEntity<List<StandardSizeResponse>> getAllStandardSizes() {
         List<StandardSizeResponse> sizes = standardSizeService.getAllStandardSizes();
         return ResponseEntity.ok(sizes);
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
     public ResponseEntity<Page<StandardSizeResponse>> getStandardSizes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -43,6 +45,7 @@ public class StandardSizeController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
     public ResponseEntity<StandardSizeResponse> getStandardSizeById(@PathVariable Long id) {
         StandardSizeResponse size = standardSizeService.getStandardSizeById(id);
         return ResponseEntity.ok(size);

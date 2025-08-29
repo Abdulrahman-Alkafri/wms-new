@@ -45,7 +45,7 @@ public class LocationService {
                     .shelf(loc.getShelf())
                     .bin(loc.getBin())
                     .standardSizeId(
-                        loc.getStandardSize() != null
+                        loc.getStandardSize() != null && loc.getStandardSize().getId() != null
                             ? loc.getStandardSize().getId().intValue()
                             : null)
                     .standardSizeName(

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,12 +21,14 @@ public class CustomerController {
   private final CustomerService customerService;
 
   @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<CustomerResponseDto> createCustomer(@RequestBody @Valid CreateCustomerDto dto) {
     CustomerResponseDto response = customerService.createCustomer(dto);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
   @GetMapping("/search")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<Page<CustomerResponseDto>> findAllCustomers(
       @ModelAttribute CustomerBaseSearchCriteria criteria) {
     Page<CustomerResponseDto> customers = customerService.findAllCustomers(criteria);
@@ -33,12 +36,14 @@ public class CustomerController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<CustomerResponseDto> getCustomerById(@PathVariable Long id) {
     CustomerResponseDto customer = customerService.getCustomerById(id);
     return ResponseEntity.ok(customer);
   }
 
   @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Customer> updateCustomer(
       @PathVariable Long id, @Valid @RequestBody UpdateCustomerDto dto) {
     Customer updated = customerService.updateCustomer(id, dto);
@@ -46,6 +51,7 @@ public class CustomerController {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
     customerService.deleteCustomer(id);
     return ResponseEntity.noContent().build();

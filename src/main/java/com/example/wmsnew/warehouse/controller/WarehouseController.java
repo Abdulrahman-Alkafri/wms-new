@@ -17,24 +17,28 @@ public class WarehouseController {
   private final WarehouseService warehouseService;
 
   @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<WarehouseResponse> createWarehouse(@RequestBody WarehouseRequest request) {
     WarehouseResponse response = warehouseService.createWarehouse(request);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
   @GetMapping
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<Page<AllWarehouseResponse>> getAllWarehouses(
       WarehouseSearchCriteria criteria) {
     return new ResponseEntity<>(warehouseService.findAllWarehouses(criteria), HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
   public ResponseEntity<WarehouseResponse> getWarehouseById(@PathVariable Long id) {
     WarehouseResponse response = warehouseService.getWarehouseById(id);
     return ResponseEntity.ok(response);
   }
 
   @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<WarehouseResponse> updateWarehouse(
       @PathVariable Long id, @RequestBody UpdateWarehouseRequest request) {
     WarehouseResponse response = warehouseService.updateWarehouse(id, request);

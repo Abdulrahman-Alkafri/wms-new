@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
 public class CreateShipmentItemDto {
@@ -16,9 +15,6 @@ public class CreateShipmentItemDto {
     @NotNull(message = "Quantity is required")
     @Positive(message = "Quantity must be positive")
     private Integer quantity;
-    
-    private LocalDate manufacturingDate;
-    private LocalDate expiryDate;
     
     @NotNull(message = "Unit cost is required")
     @Positive(message = "Unit cost must be positive")

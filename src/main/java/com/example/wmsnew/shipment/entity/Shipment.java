@@ -44,6 +44,7 @@ public class Shipment extends BaseEntity {
   @Builder.Default
   private List<ShipmentItems> items = new ArrayList<>();
 
+
   // Convenience
   public void addItem(ShipmentItems item) {
     items.add(item);

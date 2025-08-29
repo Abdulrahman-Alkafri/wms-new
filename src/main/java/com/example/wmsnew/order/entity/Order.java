@@ -34,7 +34,7 @@ public class Order extends BaseEntity {
   private Customer customer;
 
   @ManyToOne
-  @JoinColumn(name = "pickeder_id")
+  @JoinColumn(name = "picker_id")
   private User picker;
 
   @Column(name = "required_date")

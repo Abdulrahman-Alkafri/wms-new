@@ -25,7 +25,7 @@ public class Location extends BaseEntity {
   private String locationCode;
 
   @ManyToOne
-  @JoinColumn(name = "warehoue_id")
+  @JoinColumn(name = "warehouse_id")
   private Warehouse warehouse;
 
   private String asile;

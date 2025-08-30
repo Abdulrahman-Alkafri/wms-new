@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -54,5 +55,5 @@ public class OrderItems extends BaseEntity {
   private BigDecimal unitPrice;
 
   @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<OrderItemAllocation> allocations;
+  private List<OrderItemAllocation> allocations = new ArrayList<>();
 }

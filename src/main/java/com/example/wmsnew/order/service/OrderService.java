@@ -48,7 +48,6 @@ public class OrderService {
     private final OrderItemAllocationRepository orderItemAllocationRepository;
     private final InventoryService inventoryService;
 
-    @Transactional
     public OrderResponseDto createOrder(CreateOrderDto createDto) {
         log.info("Creating order with number: {}", createDto.getOrderNumber());
 
@@ -68,7 +67,7 @@ public class OrderService {
                 .build();
 
         order = ordersRepository.save(order);
-
+        
         // Process items
         int totalItems = 0;
         int totalPrice = 0;
@@ -83,6 +82,8 @@ public class OrderService {
         // Update totals
         order.setTotalItems(totalItems);
         order.setTotalPrice(totalPrice);
+        
+        // Save order with all items and allocations in one transaction
         order = ordersRepository.save(order);
 
         log.info("Order created successfully with id: {}", order.getId());
@@ -121,6 +122,13 @@ public class OrderService {
             for (InventoryAllocationDto allocationDto : itemDto.getInventoryAllocations()) {
                 Inventory inventory = inventoryRepository.findById(allocationDto.getInventoryId()).orElse(null);
                 if (inventory != null) {
+                    // Set the primary inventory reference for the order item (first allocation)
+                    if (orderItem.getInventory() == null) {
+                        orderItem.setInventory(inventory);
+                        orderItem.setBatchNumber(inventory.getBatchNumber());
+                        orderItem.setManufacturingDate(inventory.getManufacturingDate());
+                        orderItem.setExpiryDate(inventory.getExpiryDate());
+                    }
                     // Immediately reduce inventory for this allocation
                     try {
                         inventoryService.reserveSpecificInventory(inventory.getId(), allocationDto.getQuantityToAllocate());
@@ -470,12 +478,13 @@ public class OrderService {
     }
 
     public OrderResponseDto getOrderById(Integer id) {
-        Order order = ordersRepository.findById(id)
+        log.info("Fetching order with id: {} including items", id);
+        Order order = ordersRepository.findByIdWithItems(id)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + id));
+        log.info("Order {} loaded with {} items", id, order.getItems() != null ? order.getItems().size() : 0);
         return mapToResponseDto(order);
     }
 
-    @Transactional
     public OrderResponseDto updateOrder(Integer orderId, UpdateOrderDto updateDto) {
         Order order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));

@@ -4,10 +4,12 @@ import com.example.wmsnew.common.dtos.BaseSearchCriteria;
 import com.example.wmsnew.common.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

@@ -111,6 +111,43 @@ public class WarehouseService {
     return response;
   }
 
+  public DetailedWarehouseResponse getWarehouseDetails(Long warehouseId) {
+    Warehouse warehouse =
+        warehouseRepository
+            .findById(warehouseId)
+            .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
+
+    // Group locations by standard size to create location group summaries
+    var locationsByStandardSize = warehouse.getLocations().stream()
+        .collect(java.util.stream.Collectors.groupingBy(
+            location -> location.getStandardSize(),
+            java.util.stream.Collectors.counting()
+        ));
+
+    List<DetailedWarehouseResponse.LocationGroupSummary> locationGroups = 
+        locationsByStandardSize.entrySet().stream()
+            .map(entry -> {
+                StandardSizes standardSize = entry.getKey();
+                Long count = entry.getValue();
+                return DetailedWarehouseResponse.LocationGroupSummary.builder()
+                    .standardSizeId(standardSize.getId())
+                    .standardSizeName(standardSize.getSizeName())
+                    .locationCount(count.intValue())
+                    .description(String.format("%d locations with size %s", count, standardSize.getSizeName()))
+                    .build();
+            })
+            .toList();
+
+    return DetailedWarehouseResponse.builder()
+        .id(warehouse.getId())
+        .warehouseName(warehouse.getWarehouseName())
+        .totalLocations(warehouse.getLocations().size())
+        .createdAt(warehouse.getCreatedAt())
+        .updatedAt(warehouse.getUpdatedAt())
+        .locationGroups(locationGroups)
+        .build();
+  }
+
   @Transactional
   public WarehouseResponse updateWarehouse(Long warehouseId, UpdateWarehouseRequest request) {
     Warehouse warehouse =

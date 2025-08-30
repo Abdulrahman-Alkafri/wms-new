@@ -15,6 +15,9 @@ import java.util.Optional;
 public interface OrdersRepository extends JpaRepository<Order, Integer>, JpaSpecificationExecutor<Order> {
     Optional<Order> findByOrderNumber(String orderNumber);
     
+    @Query("SELECT o FROM Order o LEFT JOIN FETCH o.items WHERE o.id = :id")
+    Optional<Order> findByIdWithItems(@Param("id") Integer id);
+    
     // Analytics queries for dashboard
     @Query("SELECT DATE(o.createdAt) as date, COUNT(o) as count, SUM(o.totalPrice) as totalValue " +
            "FROM Order o " +

@@ -13,12 +13,12 @@ public interface WarehouseRepository
     extends JpaRepository<Warehouse, Long>, JpaSpecificationExecutor<Warehouse> {
     
     // Analytics queries for warehouse statistics
-    @Query("SELECT COUNT(w) FROM Warehouse w WHERE w.capacity > :threshold")
-    Long countWarehousesWithHighCapacity(@Param("threshold") Integer threshold);
+    @Query("SELECT COUNT(w) FROM Warehouse w WHERE SIZE(w.locations) > :threshold")
+    Long countWarehousesWithManyLocations(@Param("threshold") Integer threshold);
     
-    @Query("SELECT AVG(w.capacity) FROM Warehouse w")
-    Double getAverageWarehouseCapacity();
+    @Query("SELECT AVG(SIZE(w.locations)) FROM Warehouse w")
+    Double getAverageWarehouseLocationCount();
     
-    @Query("SELECT SUM(w.capacity) FROM Warehouse w")
-    Long getTotalWarehouseCapacity();
+    @Query("SELECT SUM(SIZE(w.locations)) FROM Warehouse w")
+    Long getTotalWarehouseLocations();
 }

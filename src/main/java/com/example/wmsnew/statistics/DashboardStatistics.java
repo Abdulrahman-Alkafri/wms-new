@@ -7,7 +7,7 @@ public class DashboardStatistics {
     private Long totalSuppliers;
     private Long totalCustomers;
     private Long activeEmployees;
-    private Long warehousesWithHighCapacity;
+    private Long warehousesWithManyLocations;
     private Long suppliersWithActiveContracts;
     private Long customersWithRecentOrders;
     
@@ -21,7 +21,7 @@ public class DashboardStatistics {
 
     public DashboardStatistics(Long totalUsers, Long totalWarehouses, Long totalEmployees, 
                              Long totalSuppliers, Long totalCustomers, Long activeEmployees,
-                             Long warehousesWithHighCapacity, Long suppliersWithActiveContracts,
+                             Long warehousesWithManyLocations, Long suppliersWithActiveContracts,
                              Long customersWithRecentOrders) {
         this.totalUsers = totalUsers;
         this.totalWarehouses = totalWarehouses;
@@ -29,7 +29,7 @@ public class DashboardStatistics {
         this.totalSuppliers = totalSuppliers;
         this.totalCustomers = totalCustomers;
         this.activeEmployees = activeEmployees;
-        this.warehousesWithHighCapacity = warehousesWithHighCapacity;
+        this.warehousesWithManyLocations = warehousesWithManyLocations;
         this.suppliersWithActiveContracts = suppliersWithActiveContracts;
         this.customersWithRecentOrders = customersWithRecentOrders;
     }
@@ -84,11 +84,11 @@ public class DashboardStatistics {
     }
 
     public Long getWarehousesWithHighCapacity() {
-        return warehousesWithHighCapacity;
+        return warehousesWithManyLocations;
     }
 
-    public void setWarehousesWithHighCapacity(Long warehousesWithHighCapacity) {
-        this.warehousesWithHighCapacity = warehousesWithHighCapacity;
+    public void setWarehousesWithHighCapacity(Long warehousesWithManyLocations) {
+        this.warehousesWithManyLocations = warehousesWithManyLocations;
     }
 
     public Long getSuppliersWithActiveContracts() {

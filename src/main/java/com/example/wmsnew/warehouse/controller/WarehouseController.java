@@ -37,6 +37,13 @@ public class WarehouseController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/{id}/details")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PICKER', 'STORER')")
+  public ResponseEntity<DetailedWarehouseResponse> getWarehouseDetails(@PathVariable Long id) {
+    DetailedWarehouseResponse response = warehouseService.getWarehouseDetails(id);
+    return ResponseEntity.ok(response);
+  }
+
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<WarehouseResponse> updateWarehouse(
